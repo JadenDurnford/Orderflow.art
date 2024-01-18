@@ -7,7 +7,7 @@ type Page = {
   path: string;
 };
 
-// Orderflow.in pages
+// Orderflow.art pages
 const PAGES: Page[] = [
   { name: "Sankey", path: "/" },
   { name: "Frontends", path: "/frontends" },
@@ -19,7 +19,7 @@ export default function Navigation() {
   const { route }: { route: string } = useRouter();
 
   return (
-    <section className="z-10000 sticky top-0 flex flex-col overflow-x-auto border-b border-t border-dune-300 bg-dune-200 px-5 py-2 text-center">
+    <section className="sticky top-0 z-10000 flex flex-col overflow-x-auto border-b border-t border-dune-300 bg-dune-200 px-5 py-2 text-center">
       <ul className="mx-auto flex min-w-max max-w-[800px] flex-row space-x-10">
         {PAGES.map((page: Page, i: number) => {
           const isActivePath: boolean = route === page.path;
