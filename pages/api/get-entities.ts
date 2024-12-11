@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { SelectItem, getEntitiesResponse } from "@/utils/types";
 import { client } from "@/utils/clickhouse";
-import { getTimeframeFilter } from "@/utils/helpers";
+import { getExpirationTimestamp, getTimeframeFilter } from "@/utils/helpers";
 import { entityColumns, tableName } from "@/utils/constants";
 import { Redis } from "ioredis";
 
@@ -64,7 +64,13 @@ export default async function handler(
             value: item[0],
           }));
         entities[entColumnNames[i]] = parsedEntityJson;
-        await redis.set("sql:" + baseQuery, JSON.stringify(parsedEntityJson));
+
+        await redis.set(
+          "sql:" + baseQuery,
+          JSON.stringify(parsedEntityJson),
+          "EXAT",
+          getExpirationTimestamp(),
+        );
       }
     }
 

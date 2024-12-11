@@ -27,8 +27,6 @@ export default async function handler(
       MAX(block_number) AS endBlock 
     FROM ${table}`.replace(/\s+/g, " ");
 
-    const rangeCache: string | null = await redis.get("sql:" + rangeQuery);
-
     let range: {
       startTime: string;
       endTime: string;
@@ -36,23 +34,18 @@ export default async function handler(
       endBlock: string;
     }[] = [];
 
-    if (rangeCache !== null) {
-      range.push(...JSON.parse(rangeCache));
-    } else {
-      const rangeData = await client.query({
-        query: rangeQuery,
-        format: "JSONEachRow",
-      });
+    const rangeData = await client.query({
+      query: rangeQuery,
+      format: "JSONEachRow",
+    });
 
-      const rangeDataJson: {
-        startTime: string;
-        endTime: string;
-        startBlock: string;
-        endBlock: string;
-      }[] = await rangeData.json();
-      await redis.set("sql:" + rangeQuery, JSON.stringify(rangeDataJson));
-      range.push(...rangeDataJson);
-    }
+    const rangeDataJson: {
+      startTime: string;
+      endTime: string;
+      startBlock: string;
+      endBlock: string;
+    }[] = await rangeData.json();
+    range.push(...rangeDataJson);
 
     return res.status(200).send({
       data: {

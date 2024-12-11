@@ -50,13 +50,23 @@ export default function Header() {
               Illuminating Ethereum&apos;s order flow landscape. Empowering users with tools to
               visualize power and profit in the MEV supply network.
             </p>
-            <div className="mb-8 mt-6">
+            <div className="mt-6">
               <Link
                 href="/methodology"
                 className="rounded-full bg-dune-600 px-6 py-3 text-sm text-white transition-opacity hover:opacity-70"
               >
                 Read our methodology →
               </Link>
+            </div>
+            <div className="mb-3 mt-5">
+              <a
+                href="https://github.com/JadenDurnford/Orderflow.art"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1 text-sm text-gray-700 underline transition-opacity hover:opacity-70"
+              >
+                This website is open-source!
+              </a>
             </div>
           </div>
 

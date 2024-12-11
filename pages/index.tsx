@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import SankeyRender from "@/components/sankey/Render";
 import fetcher from "@/utils/fetcher";
+import { useEffect } from "react";
 import { preload } from "swr";
 
 export default function Home() {

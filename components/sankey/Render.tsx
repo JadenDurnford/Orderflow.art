@@ -58,27 +58,35 @@ export default function SankeyRender() {
   );
 
   return (
-    <div className="border border-dune-300">
-      <SankeyFilter
-        entityData={entitiesData?.entities}
-        entityFilter={sankeyData?.data?.entityFilter ?? ""}
-        graphType={graphType}
-        setGraphType={setGraphType}
-        isOrderflow={isOrderflow}
-        setQueryParam={setQueryParam}
-        txHash={txHash}
-        setTxHash={setTxHash}
-        timeframe={timeframe}
-        setTimeframe={setTimeframe}
-      />
-      <SankeyGraph
-        height={Math.min(Math.max(windowHeight - 72, 600), 2000)}
-        txHash={txHash}
-        isLoading={sankeyLoading}
-        data={sankeyData?.data}
-        rangeData={rangeData?.data}
-        error={sankeyError}
-      />
-    </div>
+    <>
+      <div className="border border-b-0 border-dune-300 bg-dune-200 px-4 py-2 text-center">
+        <p className="text-sm text-dune-600">
+          We are working on increasing coverage for the latest order flow projects. Uniswap X V2 and
+          1inch Fusion V2 are coming soon!
+        </p>
+      </div>
+      <div className="border border-dune-300">
+        <SankeyFilter
+          entityData={entitiesData?.entities}
+          entityFilter={sankeyData?.data?.entityFilter ?? ""}
+          graphType={graphType}
+          setGraphType={setGraphType}
+          isOrderflow={isOrderflow}
+          setQueryParam={setQueryParam}
+          txHash={txHash}
+          setTxHash={setTxHash}
+          timeframe={timeframe}
+          setTimeframe={setTimeframe}
+        />
+        <SankeyGraph
+          height={Math.min(Math.max(windowHeight - 72, 600), 2000)}
+          txHash={txHash}
+          isLoading={sankeyLoading}
+          data={sankeyData?.data}
+          rangeData={rangeData?.data}
+          error={sankeyError}
+        />
+      </div>
+    </>
   );
 }

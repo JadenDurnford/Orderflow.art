@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { getHashesResponse } from "@/utils/types";
 import { client } from "@/utils/clickhouse";
 import { tableName } from "@/utils/constants";
-import { getTimeframeFilter } from "@/utils/helpers";
+import { getExpirationTimestamp, getTimeframeFilter } from "@/utils/helpers";
 import { Redis } from "ioredis";
 
 export default async function handler(
@@ -55,7 +55,14 @@ export default async function handler(
           value: hash,
           label: hash,
         }));
-      await redis.set("sql:" + baseQuery, JSON.stringify(parsedHashes));
+
+      await redis.set(
+        "sql:" + baseQuery,
+        JSON.stringify(parsedHashes),
+        "EXAT",
+        getExpirationTimestamp(),
+      );
+
       hashes.push(...parsedHashes);
     }
 
