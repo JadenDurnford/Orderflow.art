@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { SelectItem, getFilteredPairsResponse } from "@/utils/types";
 import { client } from "@/utils/clickhouse";
 import { categoryTokens, tableName } from "@/utils/constants";
-import { getTimeframeFilter } from "@/utils/helpers";
+import { getExpirationTimestamp, getTimeframeFilter } from "@/utils/helpers";
 import { Redis } from "ioredis";
 
 export default async function handler(
@@ -85,7 +85,14 @@ export default async function handler(
           return item[0];
         })
         .filter((item) => item !== "");
-      await redis.set("sql:" + baseQuery, JSON.stringify(parsedPairsJson));
+
+      await redis.set(
+        "sql:" + baseQuery,
+        JSON.stringify(parsedPairsJson),
+        "EXAT",
+        getExpirationTimestamp(),
+      );
+
       parsedPairs.push(...parsedPairsJson);
     }
 

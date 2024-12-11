@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { entityColumns, sankeyFrontendColors, tableName } from "@/utils/constants";
 import { getSankeyDataResponse } from "@/utils/types";
 import { client } from "@/utils/clickhouse";
-import { getTimeframeFilter, queryArray } from "@/utils/helpers";
+import { getExpirationTimestamp, getTimeframeFilter, queryArray } from "@/utils/helpers";
 import { Redis } from "ioredis";
 
 export default async function handler(
@@ -257,6 +257,7 @@ export default async function handler(
 
     const labels: Record<string, string[]> = {};
     const labelsArray: string[] = [];
+    const expirationTimestamp = getExpirationTimestamp();
 
     const sendLabels = async (column: string, query: string) => {
       try {
@@ -274,7 +275,8 @@ export default async function handler(
           const json: string[][] = await findLabels.json();
           const parsedJson = json.flat(1);
 
-          await redis.set("sql:" + query, JSON.stringify(parsedJson));
+          await redis.set("sql:" + query, JSON.stringify(parsedJson), "EXAT", expirationTimestamp);
+
           labels[column] = parsedJson;
           labelsArray.push(...parsedJson);
         }
@@ -326,10 +328,10 @@ export default async function handler(
             query: query,
             format: "JSONEachRow",
           });
-
           const dataJson: Record<string, any>[] = await data.json();
 
-          await redis.set("sql:" + query, JSON.stringify(dataJson));
+          await redis.set("sql:" + query, JSON.stringify(dataJson), "EXAT", expirationTimestamp);
+
           dataArray = dataJson;
         }
 
@@ -400,7 +402,14 @@ export default async function handler(
         startBlock: string;
         endBlock: string;
       }[] = await rangeData.json();
-      await redis.set("sql:" + rangeQuery, JSON.stringify(rangeDataJson));
+
+      await redis.set(
+        "sql:" + rangeQuery,
+        JSON.stringify(rangeDataJson),
+        "EXAT",
+        expirationTimestamp,
+      );
+
       range.push(...rangeDataJson);
     }
 

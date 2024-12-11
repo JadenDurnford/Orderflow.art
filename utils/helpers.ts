@@ -108,3 +108,14 @@ export const getDateString = (dateString: string) => {
 export const queryArray = (value: string | string[] | undefined) => {
   return value ? (!Array.isArray(value) ? [value] : value) : [];
 };
+
+export const getExpirationTimestamp = () => {
+  const now = new Date();
+  const expirationDate = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 2, 0, 0, 0),
+  );
+  if (now.getUTCHours() >= 2) {
+    expirationDate.setUTCDate(expirationDate.getUTCDate() + 1);
+  }
+  return Math.floor(expirationDate.getTime() / 1000);
+};
